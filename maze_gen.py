@@ -20,6 +20,8 @@ class Maze():
     # Use dict with list in it
     def p_move(self, grid: list):
         movement = {}
+        for i in range(len(grid)):
+            movement[grid[i]] = {}
         for j in range(len(grid)):
             if grid[j][0] == self.rows:
                 movement[grid[j]]['S'] = 0
@@ -64,5 +66,5 @@ class Maze():
 if __name__ == '__main__':
     maze = Maze(4, 4)
     m = maze.generate()
-    print(maze.get_neighbors(m))
+    # print(maze.get_neighbors(m))
     print(maze.p_move(m))
