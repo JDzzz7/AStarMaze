@@ -1,1 +1,1 @@
-# MazeA-
+# AStarMaze
