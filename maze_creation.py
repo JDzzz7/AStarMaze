@@ -74,7 +74,7 @@ def tear_walls(curr: Node, adj: Node):
         adj.directions["west"] = False
     
     # Walls: west curr, east adj
-    if curr.x - adj.y == 1:
+    if curr.x - adj.x == 1:
         curr.directions["west"] = False
         adj.directions["east"] = False
 
