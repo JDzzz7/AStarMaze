@@ -1,77 +1,84 @@
-# Maze generator for maze game
-# (y, x) (rows, cols)
-
 import random
 
-class Maze():
-    def __init__(self, rows: int, cols: int):
-        self.rows = rows
-        self.cols = cols
+# Generate a random maze
 
-    def generate(self):
-        grid = []
-        for y in range(self.rows):
-            for x in range(self.cols):
-                point = (x+1, y+1)
-                grid.append(point)
-        return grid
+# Node class for maze cell
+class Node():
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+        self.directions = {"north": True, "south": True, "east": True, "west": True}
+        self.visited = False
 
-    def p_move(self, grid: list)->dict:
-        movement = {}
-        for i in range(len(grid)):
-            movement[grid[i]] = {}
-        for i in range(len(grid)):
-            if grid[i][1] == self.rows:
-                movement[grid[i]]['S'] = 0
-            else:
-                movement[grid[i]]['S'] = 1
-            if grid[i][0] == self.rows:
-                movement[grid[i]]['E'] = 0
-            else:
-                movement[grid[i]]['E'] = 1
-            if grid[i][1] == 1:
-                movement[grid[i]]['N'] = 0
-            else:
-                movement[grid[i]]['N'] = 1
-            if grid[i][0] == 1:
-                movement[grid[i]]['W'] = 0
-            else:
-                movement[grid[i]]['W'] = 1
-        return movement
+# Generate the grid for the maze
+def gen_grid(rows: int, cols: int)->list:
+    # grid[y][x] = (x, y)
+    grid = [[] for i in range(rows)]
+    for i in range(rows):
+        for j in range(cols):
+            cell = Node(j, i)
+            grid[i].append(cell)
+    return grid
 
-    def get_neighbors(self, grid: list)->dict:
-        adj_map = {}
-        for i in range(len(grid)):
-            # South
-            if grid[i][1] != self.rows:
-                if grid[i] not in adj_map:
-                    adj_map[grid[i]] = [(grid[i][0], (grid[i][1])+1)]
-                else:
-                    adj_map[grid[i]].append((grid[i][0], (grid[i][1])+1))
-            # East
-            if grid[i][0] != self.cols:
-                if grid[i] not in adj_map:
-                    adj_map[grid[i]] = [((grid[i][0])+1, grid[i][1])]
-                else:
-                    adj_map[grid[i]].append(((grid[i][0])+1, grid[i][1]))
-            # North
-            if grid[i][1] != 1:
-                if grid[i] not in adj_map:
-                    adj_map[grid[i]] = [(grid[i][0], (grid[i][1])-1)]
-                else:
-                    adj_map[grid[i]].append((grid[i][0], (grid[i][1])-1))
-            # West
-            if grid[i][0] != 1:
-                if grid[i] not in adj_map:
-                    adj_map[grid[i]] = [((grid[i][0])-1, grid[i][1])]
-                else:
-                    adj_map[grid[i]].append(((grid[i][0])-1, grid[i][1]))
-        return adj_map
+def get_neighbors(grid: list):
+    pass
+        
+# Get the next adjacent cell randomly
+def get_rand_path(curr_cell: Node, grid: list, rows: int, cols: int)->Node:
+    # check if curr cell neighbors are out of bounds
+    x = curr_cell.x
+    y = curr_cell.y
+    picks = []
+    
+    # North
+    if (y-1 >= 0) and not (grid[y-1][x]).visited:
+        picks.append(grid[y-1][x])
+    # South
+    if (y+1 <= rows-1) and not (grid[y+1][x]).visited:
+        picks.append(grid[y+1][x])
+    # East
+    if (x+1 <= cols-1) and not (grid[y][x+1]).visited:
+        picks.append(grid[y][x+1])
+    # West
+    if (x-1 >= 0) and not (grid[y][x-1]).visited:
+        picks.append(grid[y][x-1])
+
+    if len(picks) == 0:
+        return False
+    return random.choice(picks)
+
+def tear_walls(curr: Node, adj: Node):
+    # Walls: north curr, south adj
+    if curr.y - adj.y == 1:
+        curr.directions["north"] = False
+        adj.directions["south"] = False
+
+    # Walls: south curr, north adj
+    if curr.y - adj.y == -1:
+        curr.directions["south"] = False
+        adj.directions["north"] = False
+
+    # Walls: east curr, west adj
+    if curr.x - adj.x == -1:
+        curr.directions["east"] = False
+        adj.directions["west"] = False
+    
+    # Walls: west curr, east adj
+    if curr.x - adj.x == 1:
+        curr.directions["west"] = False
+        adj.directions["east"] = False
+
+def DFS(curr_cell: Node, grid: list, traversal: list, rows: int, cols: int):
+    adj_cell = get_rand_path(curr_cell, grid, rows, cols)
+    if adj_cell:
+        adj_cell.visited = True
+        tear_walls(curr_cell, adj_cell)
+        curr_cell = adj_cell
+        traversal.append(curr_cell)
+        DFS(curr_cell, grid, traversal, rows, cols)
+
+    elif len(traversal) != 0:
+        curr_cell = traversal.pop()
+        DFS(curr_cell, grid, traversal, rows, cols)
 
 
-if __name__ == '__main__':
-    maze = Maze(4, 4)
-    m = maze.generate()
-    #print(m)
-    print(maze.get_neighbors(m))
-    print(maze.p_move(m))
