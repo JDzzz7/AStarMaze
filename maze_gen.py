@@ -69,16 +69,27 @@ def tear_walls(curr: Node, adj: Node):
         adj.directions["east"] = False
 
 def DFS(curr_cell: Node, grid: list, traversal: list, rows: int, cols: int):
-    adj_cell = get_rand_path(curr_cell, grid, rows, cols)
-    if adj_cell:
-        adj_cell.visited = True
-        tear_walls(curr_cell, adj_cell)
-        curr_cell = adj_cell
-        traversal.append(curr_cell)
-        DFS(curr_cell, grid, traversal, rows, cols)
+    while True:
+        # Get the next adjacent cell
+        adj_cell = get_rand_path(curr_cell, grid, rows, cols)
 
-    elif len(traversal) != 0:
-        curr_cell = traversal.pop()
-        DFS(curr_cell, grid, traversal, rows, cols)
+        # If unvisted adjacent cell exists, set visited to true. 
+        # Add the current visited cell to the stack.
+        # Set current cell as the adjacent cell. 
+        if adj_cell:
+            adj_cell.visited = True
+            tear_walls(curr_cell, adj_cell)
+            traversal.append(curr_cell)
+            curr_cell = adj_cell
+        
+        # If unvisited adjacent cell DNE, pop from stack.
+        # Set last item from the stack as current_cell.
+        # Loops through to find a possible path again with another random direction pick.
+        elif len(traversal) != 0:
+            curr_cell = traversal.pop()
+
+        # Breaks out when all maze cells are visited. Maze generation is complete.
+        else:
+            break
 
 

@@ -4,14 +4,15 @@ from maze_gen import *
 
 # Initializing pygame
 pygame.init()
+pygame.display.set_caption('Random Maze')
 
 # Defining screen size, background, visited, line colors & length of cells
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1080
+SCREEN_HEIGHT = 780
 BACKGROUND = pygame.Color("#191970")
 V_COLOR = pygame.Color("#000000")
 LINE_COLOR = pygame.Color("#03FFE8")
-LENGTH = 100
+LENGTH = 30
 
 # Dynamic rows and cols gen depending on screen width/height and tile size
 ROWS = SCREEN_HEIGHT // LENGTH
@@ -26,13 +27,13 @@ def draw_graphics(cell: Node):
         pygame.draw.rect(screen, V_COLOR, (x, y, LENGTH, LENGTH))
     
     if cell.directions["north"]:
-        pygame.draw.line(screen, LINE_COLOR, (x, y), (x + LENGTH, y))
+        pygame.draw.line(screen, LINE_COLOR, (x, y), (x + LENGTH, y), 3)
     if cell.directions["south"]:
-        pygame.draw.line(screen, LINE_COLOR, (x, y + LENGTH), (x + LENGTH, y + LENGTH))
+        pygame.draw.line(screen, LINE_COLOR, (x, y + LENGTH), (x + LENGTH, y + LENGTH), 3)
     if cell.directions["east"]:
-        pygame.draw.line(screen, LINE_COLOR, (x + LENGTH, y), (x + LENGTH, y + LENGTH))
+        pygame.draw.line(screen, LINE_COLOR, (x + LENGTH, y), (x + LENGTH, y + LENGTH), 3)
     if cell.directions["west"]:
-        pygame.draw.line(screen, LINE_COLOR, (x, y), (x, y + LENGTH))
+        pygame.draw.line(screen, LINE_COLOR, (x, y), (x, y + LENGTH), 3)
 
 def draw_grid(grid: list):
     for i in range(ROWS):
